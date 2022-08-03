@@ -1,1 +1,1 @@
-# python_by_Marcin
+# python_by_Marcin Szkudlarek
