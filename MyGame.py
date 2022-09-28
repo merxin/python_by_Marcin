@@ -18,17 +18,19 @@ run = True
 gamefont = pygame.font.Font(None, 50)
 gamefont2 = pygame.font.Font(None, 30)
 text_surface = gamefont.render(f'Dwarf GAME', False, 'Black')
-ready_surface = gamefont2.render(f'READY? - catch  chickens but beware of the dogs..., click to start ?', False, 'Orange')
+ready_surface = gamefont2.render(f'READY? - catch  chickens but beware of the dogs...', False, 'Orange')
+ready_surface2 = gamefont2.render(f' w-up, a - left, s- down, d - right   click to start ?', False, 'Orange')
 gameover_txt = gamefont.render("GAME OVER", True, ('Black'))
+
+
 class Game:
-    MaxLevel = 6
+
 
     def __init__(self, level=1):
         self.level = level
-        self.state='intro'
-        #self.totalpoints = totalpoints
+        self.state = 'intro'
 
-
+# intro screen
     def intro(self):
         chicken.empty()
         player.empty()
@@ -41,27 +43,29 @@ class Game:
 
                 for i in range(game.level + 2):
                     chicken.add(Creature())
-                for i in range(game.level+ game.level//3):
+                for i in range(game.level + game.level // 3):
                     dog.add(Opponent())
                 player.add(Player())
                 self.state = 'main_game'
 
             screen.blit(background, (0, 0))
             screen.blit(ready_surface, (5, 300))
+            screen.blit(ready_surface2, (5, 330))
             game.display_score()
             player.draw(screen)
             pygame.display.update()
 
+#main game
     def main_game(self):
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            if collision_dog()==True:
+            if collision_dog() == True:
                 self.state = 'game_over'
             screen.blit(background, (0, 0))
             screen.blit(text_surface, (500, 10))
-            pygame.display.update()
             player.draw(screen)
             player.update()
             chicken.draw(screen)
@@ -69,13 +73,14 @@ class Game:
             dog.draw(screen)
             dog.update()
             collision_catch()
-            if len(chicken)==0:
-                self.level+=1
+            pygame.display.update()
+            if len(chicken) == 0:
+                self.level += 1
                 self.state = 'intro'
 
             game.display_score()
-            pygame.display.update()
 
+# game over screen
     def game_over(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -87,18 +92,15 @@ class Game:
             pygame.display.update()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.state = 'intro'
-                self.level -=self.level-1
-
-
+                self.level -= self.level - 1
+# managing game status
     def level_manager(self):
-        if self.state =='intro':
+        if self.state == 'intro':
             self.intro()
-        if self.state =='main_game':
+        if self.state == 'main_game':
             self.main_game()
-        if self.state =='game_over':
+        if self.state == 'game_over':
             self.game_over()
-
-
 
     def display_score(self):
         current_time = int(pygame.time.get_ticks() / 1000) - start_time
@@ -109,10 +111,13 @@ class Game:
         self.level_text = gamefont.render(f"Level{self.level}", 1, (255, 255, 255))
         screen.blit(self.level_text, (10, H - 50))
 
+
 game = Game()
+
 
 class Player(pygame.sprite.Sprite):
     start_pos = (300, 100)
+
     def __init__(self):
         super().__init__()
         self.start_pos = (300, 100)
@@ -131,6 +136,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.y -= self.speed
         if keys[pygame.K_s] and self.rect.bottom <= H:
             self.rect.y += self.speed
+
 
 class Creature(pygame.sprite.Sprite):
     def __init__(self):
@@ -153,7 +159,6 @@ class Creature(pygame.sprite.Sprite):
                 self.directionx = -self.directionx
 
 
-
 class Opponent(Creature):
     def __init__(self):
         super().__init__()
@@ -174,26 +179,26 @@ class Opponent(Creature):
             if self.rect.x >= W - 20 or self.rect.x <= W - W:
                 self.directionx = -self.directionx
 
+
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 chicken = pygame.sprite.Group()
 dog = pygame.sprite.Group()
 
+# catchig chicken
 def collision_catch():
     if pygame.sprite.spritecollide(player.sprite, chicken, True):
         return True
     else:
         return False
 
+# collision with dog
 def collision_dog():
     if pygame.sprite.spritecollide(player.sprite, dog, True):
         return True
     else:
         return False
 
+
 while run:
     game.level_manager()
-
-
-
-
