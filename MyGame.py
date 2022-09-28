@@ -25,12 +25,11 @@ gameover_txt = gamefont.render("GAME OVER", True, ('Black'))
 
 class Game:
 
-
     def __init__(self, level=1):
         self.level = level
         self.state = 'intro'
 
-# intro screen
+    # intro screen
     def intro(self):
         chicken.empty()
         player.empty()
@@ -55,7 +54,7 @@ class Game:
             player.draw(screen)
             pygame.display.update()
 
-#main game
+    # main game
     def main_game(self):
 
         for event in pygame.event.get():
@@ -73,14 +72,14 @@ class Game:
             dog.draw(screen)
             dog.update()
             collision_catch()
+            game.display_score()
             pygame.display.update()
             if len(chicken) == 0:
                 self.level += 1
                 self.state = 'intro'
 
-            game.display_score()
 
-# game over screen
+    # game over screen
     def game_over(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -93,7 +92,8 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.state = 'intro'
                 self.level -= self.level - 1
-# managing game status
+
+    # managing game status
     def level_manager(self):
         if self.state == 'intro':
             self.intro()
@@ -185,12 +185,14 @@ player.add(Player())
 chicken = pygame.sprite.Group()
 dog = pygame.sprite.Group()
 
+
 # catchig chicken
 def collision_catch():
     if pygame.sprite.spritecollide(player.sprite, chicken, True):
         return True
     else:
         return False
+
 
 # collision with dog
 def collision_dog():
